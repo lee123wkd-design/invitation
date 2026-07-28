@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <!-- 모바일 화면 설정 -->
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no">
+
+    <title>Our Special Day</title>
+
+
+    <style>
+
+        /* =========================
+           기본 설정
+        ========================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+
+            margin: 0;
+            padding: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+
+            background: #000;
+        }
+
+
+        /* =========================
+           스와이프 영역
+        ========================= */
+
+        .slider {
+
+            width: 100vw;
+            height: 100dvh;
+
+            display: flex;
+
+            overflow-x: auto;
+            overflow-y: hidden;
+
+            /* 한 페이지씩 스냅 */
+            scroll-snap-type: x mandatory;
+
+            /* 부드러운 스크롤 */
+            scroll-behavior: smooth;
+
+            /* iPhone에서 자연스러운 스와이프 */
+            -webkit-overflow-scrolling: touch;
+
+            /* 스크롤바 숨김 */
+            scrollbar-width: none;
+        }
+
+
+        /* Chrome / Safari 스크롤바 숨김 */
+
+        .slider::-webkit-scrollbar {
+            display: none;
+        }
+
+
+        /* =========================
+           각각의 페이지
+        ========================= */
+
+        .page {
+
+            /*
+              화면 한 장의 너비를
+              정확히 100%로 설정
+            */
+
+            flex: 0 0 100vw;
+
+            width: 100vw;
+            height: 100dvh;
+
+            /*
+              스와이프 시
+              페이지 단위로 정렬
+            */
+
+            scroll-snap-align: start;
+
+            /*
+              한 번 스와이프하면
+              한 페이지씩 이동
+            */
+
+            scroll-snap-stop: always;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            overflow: hidden;
+        }
+
+
+        /* =========================
+           이미지
+        ========================= */
+
+        .page img {
+
+            display: block;
+
+            width: 100%;
+            height: 100%;
+
+            /*
+              화면 전체를 채움
+            */
+
+            object-fit: cover;
+
+            object-position: center center;
+        }
+
+
+        /* =========================
+           페이지 표시 점
+        ========================= */
+
+        .dots {
+
+            position: fixed;
+
+            left: 50%;
+
+            bottom:
+                calc(
+                    25px +
+                    env(safe-area-inset-bottom)
+                );
+
+            transform: translateX(-50%);
+
+            display: flex;
+
+            gap: 8px;
+
+            z-index: 100;
+        }
+
+
+        .dot {
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 255, 255, 0.4);
+
+            transition:
+                transform 0.3s ease,
+                background 0.3s ease;
+        }
+
+
+        .dot.active {
+
+            background: white;
+
+            transform: scale(1.3);
+        }
+
+
+        /* =========================
+           아이폰 세로 화면
+        ========================= */
+
+        @media screen
+        and (max-width: 500px)
+        and (orientation: portrait) {
+
+            .page img {
+
+                width: 100vw;
+                height: 100dvh;
+
+                object-fit: cover;
+            }
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =================================
+         이미지 5장
+    ================================== -->
+
+    <main
+        class="slider"
+        id="slider">
+
+
+        <!-- 1페이지 -->
+
+        <section class="page">
+
+            <img
+                src="Inv_1.jpg"
+                alt="Page 1">
+
+        </section>
+
+
+        <!-- 2페이지 -->
+
+        <section class="page">
+
+            <img
+                src="Inv_2.jpg"
+                alt="Page 2">
+
+        </section>
+
+
+        <!-- 3페이지 -->
+
+        <section class="page">
+
+            <img
+                src="Inv_3.jpg"
+                alt="Page 3">
+
+        </section>
+
+
+        <!-- 4페이지 -->
+
+        <section class="page">
+
+            <img
+                src="Inv_4.jpg"
+                alt="Page 4">
+
+        </section>
+
+
+        <!-- 5페이지 -->
+
+        <section class="page">
+
+            <img
+                src="Inv_5.jpg"
+                alt="Page 5">
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =================================
+         페이지 표시
+    ================================== -->
+
+    <div class="dots">
+
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+
+    </div>
+
+
+    <script>
+
+
+        /* =========================
+           요소 가져오기
+        ========================= */
+
+        const slider =
+            document.getElementById(
+                "slider"
+            );
+
+        const dots =
+            document.querySelectorAll(
+                ".dot"
+            );
+
+
+        /* =========================
+           현재 페이지 표시
+        ========================= */
+
+        slider.addEventListener(
+            "scroll",
+            function () {
+
+
+                /*
+                   현재 화면의 너비
+                */
+
+                const pageWidth =
+                    window.innerWidth;
+
+
+                /*
+                   현재 페이지 계산
+
+                   예:
+                   0   → 1페이지
+                   393 → 2페이지
+                   786 → 3페이지
+                */
+
+                const currentPage =
+                    Math.round(
+                        slider.scrollLeft
+                        /
+                        pageWidth
+                    );
+
+
+                /*
+                   페이지 점 업데이트
+                */
+
+                dots.forEach(
+                    function (
+                        dot,
+                        index
+                    ) {
+
+
+                        if (
+                            index ===
+                            currentPage
+                        ) {
+
+                            dot.classList.add(
+                                "active"
+                            );
+
+                        } else {
+
+                            dot.classList.remove(
+                                "active"
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>
